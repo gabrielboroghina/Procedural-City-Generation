@@ -30,7 +30,7 @@ class Buildings
 {
 public:
     Mesh *cyl;
-    Texture2D *texture[40];
+    Texture2D *texture[40], *roofTexture;
     std::vector<Building *> buildings;
 
     Buildings();

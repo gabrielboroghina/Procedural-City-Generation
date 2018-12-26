@@ -43,6 +43,10 @@ void Buildings::LoadTextures()
         texture[20 + i] = new Texture2D();
         texture[20 + i]->Load2D((RESOURCE_PATH::TEXTURES + "building_l" + std::to_string(i) + ".png").c_str(), GL_REPEAT);
     }
+
+    // roof texture
+    roofTexture = new Texture2D();
+    roofTexture->Load2D((RESOURCE_PATH::TEXTURES + "roof.jpg").c_str(), GL_REPEAT);
 }
 
 /** Probabilistic chosen number of faces */
@@ -62,15 +66,15 @@ Building *Buildings::GenerateBuilding(float xmin, float xmax, float zmin, float 
     float height = MIN_HEIGHT + (rand() % 10 + 1) * (MAX_HEIGHT - MIN_HEIGHT) / 10;
     int numFacesType = rand() % 100;
 
-    auto cyl = MeshBuilder::CreateCylinder(height, 1, ComputeNumberOfFaces(numFacesType), rand() % 2);
-    Mesh *mesh = cyl.first;
+    auto buildingCyl = MeshBuilder::CreateCylinder(height, 1, ComputeNumberOfFaces(numFacesType), rand() % 2);
+    Mesh *mesh = get<0>(buildingCyl);
 
     // pseudo-randomly choose texture function of the building's height
     Texture2D *tex = numFacesType >= 90 ? texture[0] : texture[(height >= 2) ? (rand() % hTextures + 1) : (rand() % lTextures + 21)];
 
     // place the building in the desired area
     float _x, x, _z, z;
-    std::tie(_x, x, _z, z) = cyl.second;
+    std::tie(_x, x, _z, z) = get<2>(buildingCyl);
     float scaleFactor = min((xmax - xmin) / (x - _x), (zmax - zmin) / (z - _z));
     glm::mat4 scaleMat = glm::scale(glm::mat4(1), glm::vec3(scaleFactor, 1, scaleFactor));
     glm::mat4 translateMat = glm::translate(glm::mat4(1), glm::vec3(xmin - _x * (xmax - xmin) / (x - _x), 0,
@@ -79,6 +83,7 @@ Building *Buildings::GenerateBuilding(float xmin, float xmax, float zmin, float 
 
     Building *building = new Building(globalModelMat);
     building->AddComp(mesh, tex, glm::mat4(1));
+    building->AddComp(get<1>(buildingCyl), roofTexture, glm::mat4(1));
 
     // TODO assembly other primitives to the building's base
 

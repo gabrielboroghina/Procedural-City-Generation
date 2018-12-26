@@ -21,5 +21,6 @@ public:
 
     static Mesh *CreateVertRect(glm::vec3 center, float height, float width);
 
-    static std::pair<Mesh*, tuple<float, float, float, float>> CreateCylinder(float height, float rad, int numFaces, bool degenerate);
+    static std::tuple<Mesh*, Mesh*, tuple<float, float, float, float>> CreateCylinder(
+        float height, float rad, int numFaces, bool degenerate);
 };

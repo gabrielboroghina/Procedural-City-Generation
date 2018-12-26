@@ -136,22 +136,25 @@ Mesh *MeshBuilder::CreateVertRect(glm::vec3 center, float height, float width)
     return rect;
 }
 
-std::pair<Mesh*, std::tuple<float, float, float, float>>
+std::tuple<Mesh*, Mesh*, std::tuple<float, float, float, float>>
 MeshBuilder::CreateCylinder(float height, float rad, int numFaces, bool degenerate)
 {
     Mesh *cyl = new Mesh("cyl");
+    Mesh *roof = new Mesh("roof");
     glm::vec3 color(0.5);
 
-    std::vector<VertexFormat> vertices;
-    std::vector<unsigned short> indices;
+    std::vector<VertexFormat> vertices, roofVertices;
+    std::vector<unsigned short> indices, roofIndices;
 
     // centers
     vertices.push_back(VertexFormat(glm::vec3(0, 0, 0), color, glm::vec3(0, 1, 0), glm::vec2()));
     vertices.push_back(VertexFormat(glm::vec3(0, height, 0), color, glm::vec3(0, 1, 0), glm::vec2()));
+    roofVertices.push_back(*vertices.rbegin());
 
     // starting point
     vertices.push_back(VertexFormat(glm::vec3(rad, 0, 0), color, glm::vec3(0, 1, 0), glm::vec2(1, 0)));
     vertices.push_back(VertexFormat(glm::vec3(rad, height, 0), color, glm::vec3(0, 1, 0), glm::vec2(1, int(height))));
+    roofVertices.push_back(*vertices.rbegin());
 
     std::vector<float> angles(numFaces, 2 * PI / numFaces);
 
@@ -174,6 +177,7 @@ MeshBuilder::CreateCylinder(float height, float rad, int numFaces, bool degenera
         vertices.push_back(VertexFormat(glm::vec3(rad * cos(angle), 0, rad * sin(angle)), color, glm::vec3(0, 1, 0), glm::vec2(i % 2, 0)));
         vertices.push_back(VertexFormat(glm::vec3(rad * cos(angle), height, rad * sin(angle)), color, glm::vec3(0, 1, 0),
                                         glm::vec2(i % 2, int(height))));
+        roofVertices.push_back(*vertices.rbegin());
 
         unsigned short last = (i + 1) * 2;
         unsigned short current = vertices.size() - 2;
@@ -185,9 +189,9 @@ MeshBuilder::CreateCylinder(float height, float rad, int numFaces, bool degenera
         indices.push_back(last + 1);
         indices.push_back(current);
 
-        indices.push_back(1);
-        indices.push_back(last + 1);
-        indices.push_back(current + 1);
+        roofIndices.push_back(0);
+        roofIndices.push_back(i + 1);
+        roofIndices.push_back(i + 2);
     }
 
     std::tuple<float, float, float, float> limits;
@@ -199,5 +203,6 @@ MeshBuilder::CreateCylinder(float height, float rad, int numFaces, bool degenera
     }
 
     cyl->InitFromData(vertices, indices);
-    return std::make_pair(cyl, limits);
+    roof->InitFromData(roofVertices, roofIndices);
+    return std::make_tuple(cyl, roof, limits);
 }
