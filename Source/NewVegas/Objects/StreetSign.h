@@ -6,9 +6,10 @@
 class StreetSign
 {
 public:
-    Mesh *stopMesh, *pedestrianMesh, *onewayMesh;
-    Texture2D *stopTex, *pedestrianTex, *onewayTex;
+    std::vector<std::pair<Mesh *, Texture2D *>> signModels;
 
+    std::vector<std::pair<std::pair<Mesh *, Texture2D *>, glm::mat4>> signs;
+    Mesh *tree;
     StreetSign();
     ~StreetSign();
 };

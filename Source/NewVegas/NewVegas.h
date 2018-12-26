@@ -6,6 +6,7 @@
 #include "Objects/StreetSign.h"
 #include "Streets.h"
 #include "Buildings.h"
+#include "Objects/Trees.h"
 
 class NewVegas : public SimpleScene
 {
@@ -19,9 +20,11 @@ private:
     Camera *camera;
     StreetSign *streetSign;
     Streets *streets;
-    Buildings buildings;
+    Buildings *buildings;
     Mesh *floorMesh;
     Texture2D *floorTexture;
+    Mesh *crossroad;
+    Trees *trees;
 
     void FrameStart() override;
     void Update(float deltaTimeSeconds) override;
@@ -33,6 +36,8 @@ private:
                             const std::vector<Texture2D *> &textures) const;
 
     void RenderColoredMesh(const Mesh *mesh, const glm::mat4 &modelMatrix, const glm::vec3 &color) const;
+
+    void RenderStreets();
 
     void OnInputUpdate(float deltaTime, int mods) override;
     void OnKeyPress(int key, int mods) override;

@@ -44,5 +44,9 @@ float GetLight()
 
 void main()
 {
-    out_color = texture(textureImg0, texCoord);// * GetLight();
+    out_color = texture(textureImg0, texCoord);// GetLight();
+
+    if (out_color.a < 0.5f) {
+	    discard;
+    }
 }

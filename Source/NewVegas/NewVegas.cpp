@@ -18,6 +18,9 @@ void NewVegas::Init()
     LoadShader("Texture", "Texture", "Texture");
     LoadShader("LightColor", "Texture", "Color");
 
+    // initialize camera
+    camera = new Camera(80, window->props.aspectRatio);
+
     {
         // build floor
         using namespace UIConstants;
@@ -38,14 +41,11 @@ void NewVegas::Init()
         floorTexture->Load2D((RESOURCE_PATH::TEXTURES + "asphalt2.jpg").c_str(), GL_MIRRORED_REPEAT);
     }
 
-
     // initialize objects
     streetSign = new StreetSign();
     streets = Streets::GetInstance();
-
-    // initialize camera
-    camera = new Camera(80, window->props.aspectRatio);
-    camera->SwitchMode(FirstPerson, CameraLayout::None);
+    buildings = new Buildings();
+    trees = new Trees();
 }
 
 void NewVegas::FrameStart()
@@ -61,21 +61,32 @@ void NewVegas::FrameStart()
 
 void NewVegas::Update(float deltaTimeSeconds)
 {
-    // RenderTexturedMesh(streetSign->onewayMesh, shaders["Texture"],
-    //                    glm::translate(glm::scale(glm::mat4(1), glm::vec3(0.01, 0.01, 0.01)), glm::vec3(10, -1, 0)),
-    //                    {streetSign->onewayTex});
     RenderTexturedMesh(floorMesh, shaders["TextureByPos"], glm::mat4(1), {floorTexture});
 
+    RenderStreets();
+
+    // render buildings
+    for (auto building : buildings->buildings)
+        for (auto comp : building->comps)
+            RenderTexturedMesh(comp.mesh, shaders["Texture"], building->globalModelMat * comp.modelMat, {comp.texture});
+}
+
+void NewVegas::RenderStreets()
+{
     for (auto street : streets->vertStreets)
         RenderTexturedMesh(street->mesh, shaders["Texture"], street->modelMatrix, {streets->texture[street->type]});
 
     for (auto street : streets->horizStreets)
         RenderTexturedMesh(street->mesh, shaders["Texture"], street->modelMatrix, {streets->texture[street->type]});
 
-    // render buildings
-    for (auto building : buildings.buildings)
-        for (auto comp : building->comps)
-            RenderTexturedMesh(comp.mesh, shaders["Texture"], building->globalModelMat * comp.modelMat, {comp.texture});
+    for (auto &crossroadInstance : streets->crossroadTransf)
+        RenderTexturedMesh(streets->crossroad, shaders["Texture"], crossroadInstance, {streets->crossroadTex});
+
+    // render street objects
+    for (auto &modelMat : trees->modelMatrices) {
+        SetShaderMVP(shaders["Texture"], modelMat);
+        trees->mesh->Render();
+    }
 }
 
 void NewVegas::FrameEnd()
@@ -117,10 +128,8 @@ void NewVegas::RenderTexturedMesh(const Mesh *mesh, const Shader *shader, const 
 
     // Bind textures
     for (unsigned i = 0; i < textures.size(); i++) {
-        glActiveTexture(GL_TEXTURE0 + i);
-        glBindTexture(GL_TEXTURE_2D, textures[i]->GetTextureID());
-        string textureName = "textureImg" + to_string(i);
-        glUniform1i(glGetUniformLocation(shader->GetProgramID(), textureName.c_str()), i);
+        textures[i]->BindToTextureUnit(GL_TEXTURE0 + i);
+        glUniform1i(glGetUniformLocation(shader->GetProgramID(), ("textureImg" + to_string(i)).c_str()), i);
     }
 
     // Draw the object

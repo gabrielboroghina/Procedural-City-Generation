@@ -88,6 +88,9 @@
     <ClCompile Include="..\Source\NewVegas\Buildings.cpp">
       <Filter>NewVegas</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\NewVegas\Objects\Trees.cpp">
+      <Filter>NewVegas\Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\Core\World.h">
@@ -168,6 +171,9 @@
     </ClInclude>
     <ClInclude Include="..\Source\NewVegas\Buildings.h">
       <Filter>NewVegas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\NewVegas\Objects\Trees.h">
+      <Filter>NewVegas\Objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

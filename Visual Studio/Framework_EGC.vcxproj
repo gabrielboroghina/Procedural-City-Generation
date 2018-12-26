@@ -38,6 +38,7 @@
     <ClCompile Include="..\Source\NewVegas\MeshBuilder.cpp" />
     <ClCompile Include="..\Source\NewVegas\NewVegas.cpp" />
     <ClCompile Include="..\Source\NewVegas\Objects\StreetSign.cpp" />
+    <ClCompile Include="..\Source\NewVegas\Objects\Trees.cpp" />
     <ClCompile Include="..\Source\NewVegas\Streets.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -65,6 +66,7 @@
     <ClInclude Include="..\Source\NewVegas\MeshBuilder.h" />
     <ClInclude Include="..\Source\NewVegas\NewVegas.h" />
     <ClInclude Include="..\Source\NewVegas\Objects\StreetSign.h" />
+    <ClInclude Include="..\Source\NewVegas\Objects\Trees.h" />
     <ClInclude Include="..\Source\NewVegas\Streets.h" />
     <ClInclude Include="..\Source\NewVegas\UIConstants.h" />
     <ClInclude Include="resource.h" />

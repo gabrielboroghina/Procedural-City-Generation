@@ -31,9 +31,10 @@ struct Street
 class Streets
 {
 public:
-    Mesh *vertMesh[2], *horizMesh[2];
-    Texture2D *texture[2];
+    Mesh *vertMesh[2], *horizMesh[2], *crossroad;
+    Texture2D *texture[2], *crossroadTex;
     std::vector<Street *> vertStreets, horizStreets;
+    std::vector<glm::mat4> crossroadTransf;
 
     static Streets *GetInstance();
 
@@ -41,4 +42,5 @@ public:
 private:
     Streets();
     ~Streets();
+    void InitCrossroads();
 };

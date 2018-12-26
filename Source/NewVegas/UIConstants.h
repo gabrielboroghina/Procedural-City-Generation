@@ -30,13 +30,18 @@ namespace Map
 namespace Streets
 {
     const float MIN_DIST = 0.7f;
-    const float BLVD_WIDTH = 0.5f;
+    const float BLVD_WIDTH = 0.4f;
     const float STR_WIDTH = 0.4f;
 }
 
 namespace Buildings
 {
     const float MIN_HEIGHT = 0.6f;
-    const float MAX_HEIGHT = 6.0f;
+    const float MAX_HEIGHT = 5.0f;
+}
+
+namespace Trees
+{
+    const float DIST = 3;
 }
 }

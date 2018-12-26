@@ -85,8 +85,22 @@ Building *Buildings::GenerateBuilding(float xmin, float xmax, float zmin, float 
     building->AddComp(mesh, tex, glm::mat4(1));
     building->AddComp(get<1>(buildingCyl), roofTexture, glm::mat4(1));
 
-    // TODO assembly other primitives to the building's base
+    // assembly other primitives to the building's base
+    int levels = rand() % 3 + 1;
+    float lastLevelScale = 1;
+    float top = height;
+    for (int i = 2; i <= levels; i++) {
+        glm::mat4 transform;
 
+        lastLevelScale *= 1 - (rand() % 5 + 1) / 20.0f;
+        float heightScale = (rand() % 5 + 1) / 12.0f;
+
+        transform = glm::scale(glm::translate(glm::mat4(1), glm::vec3(0, top, 0)), glm::vec3(lastLevelScale, heightScale, lastLevelScale));
+        top += heightScale * height;
+
+        building->AddComp(mesh, tex, transform);
+        building->AddComp(get<1>(buildingCyl), roofTexture, transform);
+    }
 
     return building;
 }

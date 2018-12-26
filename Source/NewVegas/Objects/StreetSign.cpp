@@ -5,31 +5,27 @@
 
 StreetSign::StreetSign()
 {
-    stopMesh = new Mesh("StreetSign");
-    stopMesh->LoadMesh(RESOURCE_PATH::MODELS + "StreetSign", "neuro_stop_obj.obj");
+    Mesh *mesh;
+    Texture2D *texture;
 
-    stopTex = new Texture2D();
-    stopTex->Load2D((RESOURCE_PATH::MODELS + "StreetSign/neuro_stop_diffuse.jpg").c_str(), GL_REPEAT);
+    std::string objList[] = {"neuro_stop_obj.obj", "neuro_pedestrian_obj.obj", "neuro_oneway_obj.obj"};
+    std::string texList[] = {"neuro_stop_diffuse.jpg", "neuro_pedestrian_diffuse.jpg", "neuro_oneway_diffuse.jpg"};
 
-    pedestrianMesh = new Mesh("StreetSign");
-    pedestrianMesh->LoadMesh(RESOURCE_PATH::MODELS + "StreetSign", "neuro_pedestrian_obj.obj");
+    for (int i = 0; i < 3; i++) {
+        mesh = new Mesh("StreetSign");
+        mesh->LoadMesh(RESOURCE_PATH::MODELS + "StreetSign", objList[i]);
 
-    pedestrianTex = new Texture2D();
-    pedestrianTex->Load2D((RESOURCE_PATH::MODELS + "StreetSign/neuro_pedestrian_diffuse.jpg").c_str(), GL_REPEAT);
+        texture = new Texture2D();
+        texture->Load2D((RESOURCE_PATH::MODELS + "StreetSign/" + texList[i]).c_str(), GL_REPEAT);
 
-    onewayMesh = new Mesh("StreetSign");
-    onewayMesh->LoadMesh(RESOURCE_PATH::MODELS + "StreetSign", "neuro_oneway_obj.obj");
-
-    onewayTex = new Texture2D();
-    onewayTex->Load2D((RESOURCE_PATH::MODELS + "StreetSign/neuro_oneway_diffuse.jpg").c_str(), GL_REPEAT);
+        signModels.push_back(std::make_pair(mesh, texture));
+    }
 }
 
 StreetSign::~StreetSign()
 {
-    delete stopMesh;
-    delete pedestrianMesh;
-    delete onewayMesh;
-    delete stopTex;
-    delete pedestrianTex;
-    delete onewayTex;
+    for (auto &p : signModels) {
+        delete p.first;
+        delete p.second;
+    }
 }

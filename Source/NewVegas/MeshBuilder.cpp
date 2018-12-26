@@ -4,7 +4,7 @@
 #include "include/gl.h"
 #include "UIConstants.h"
 
-constexpr float PI = 3.14159265358979323846;
+constexpr float PI = 3.14159265358979323846f;
 
 MeshBuilder::MeshBuilder() {}
 
@@ -97,9 +97,9 @@ Mesh *MeshBuilder::CreateRect(glm::vec3 center, float height, float width, glm::
     width /= 2;
     std::vector<VertexFormat> vertices = {
         VertexFormat(center + glm::vec3(-width, 0, -height), color, glm::vec3(0, 1, 0), glm::vec2(0, 0)),
-        VertexFormat(center + glm::vec3(width, 0, -height), color, glm::vec3(0, 1, 0), glm::vec2(0, UIConstants::Map::MAX)),
-        VertexFormat(center + glm::vec3(width, 0, height), color, glm::vec3(0, 1, 0), glm::vec2(1, 4)),
-        VertexFormat(center + glm::vec3(-width, 0, height), color, glm::vec3(0, 1, 0), glm::vec2(0, 4))
+        VertexFormat(center + glm::vec3(width, 0, -height), color, glm::vec3(0, 1, 0), glm::vec2(1, 0)),
+        VertexFormat(center + glm::vec3(width, 0, height), color, glm::vec3(0, 1, 0), glm::vec2(1, 1)),
+        VertexFormat(center + glm::vec3(-width, 0, height), color, glm::vec3(0, 1, 0), glm::vec2(0, 1))
     };
 
     Mesh *rect = new Mesh("rect");

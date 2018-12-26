@@ -28,7 +28,7 @@ public:
     glm::vec3 position;
     CameraType type;
 
-    Camera(int fov_deg, float aspectRatio) : type(CameraType::FirstPerson)
+    Camera(int fov_deg, float aspectRatio) : type(CameraType::FirstPerson), distanceToTarget(0)
     {
         forward = glm::normalize(glm::vec3(0, -1, -1));
         up = glm::vec3(0, 1, 0);
