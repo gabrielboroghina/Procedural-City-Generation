@@ -2,6 +2,9 @@
 
 #include <vector>
 #include "Core/GPU/Mesh.h"
+#include <tuple>
+
+using namespace std;
 
 class MeshBuilder
 {
@@ -17,4 +20,6 @@ public:
     static Mesh *CreateRect(glm::vec3 center, float height, float width, glm::vec3 color);
 
     static Mesh *CreateVertRect(glm::vec3 center, float height, float width);
+
+    static std::pair<Mesh*, tuple<float, float, float, float>> CreateCylinder(float height, float rad, int numFaces, bool degenerate);
 };

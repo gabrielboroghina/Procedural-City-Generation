@@ -4,6 +4,8 @@
 #include "include/gl.h"
 #include "UIConstants.h"
 
+constexpr float PI = 3.14159265358979323846;
+
 MeshBuilder::MeshBuilder() {}
 
 MeshBuilder::~MeshBuilder() {}
@@ -119,8 +121,8 @@ Mesh *MeshBuilder::CreateVertRect(glm::vec3 center, float height, float width)
     std::vector<VertexFormat> vertices = {
         VertexFormat(center + glm::vec3(-width, 0, -height), color, glm::vec3(0, 1, 0), glm::vec2(0, 0)),
         VertexFormat(center + glm::vec3(width, 0, -height), color, glm::vec3(0, 1, 0), glm::vec2(1, 0)),
-        VertexFormat(center + glm::vec3(width, 0, height), color, glm::vec3(0, 1, 0), glm::vec2(1, 10 * UIConstants::Map::MAX)),
-        VertexFormat(center + glm::vec3(-width, 0, height), color, glm::vec3(0, 1, 0), glm::vec2(0, 10 * UIConstants::Map::MAX))
+        VertexFormat(center + glm::vec3(width, 0, height), color, glm::vec3(0, 1, 0), glm::vec2(1, 16 * UIConstants::Map::MAX)),
+        VertexFormat(center + glm::vec3(-width, 0, height), color, glm::vec3(0, 1, 0), glm::vec2(0, 16 * UIConstants::Map::MAX))
     };
 
     Mesh *rect = new Mesh("rect");
@@ -132,4 +134,70 @@ Mesh *MeshBuilder::CreateVertRect(glm::vec3 center, float height, float width)
 
     rect->InitFromData(vertices, indices);
     return rect;
+}
+
+std::pair<Mesh*, std::tuple<float, float, float, float>>
+MeshBuilder::CreateCylinder(float height, float rad, int numFaces, bool degenerate)
+{
+    Mesh *cyl = new Mesh("cyl");
+    glm::vec3 color(0.5);
+
+    std::vector<VertexFormat> vertices;
+    std::vector<unsigned short> indices;
+
+    // centers
+    vertices.push_back(VertexFormat(glm::vec3(0, 0, 0), color, glm::vec3(0, 1, 0), glm::vec2()));
+    vertices.push_back(VertexFormat(glm::vec3(0, height, 0), color, glm::vec3(0, 1, 0), glm::vec2()));
+
+    // starting point
+    vertices.push_back(VertexFormat(glm::vec3(rad, 0, 0), color, glm::vec3(0, 1, 0), glm::vec2(1, 0)));
+    vertices.push_back(VertexFormat(glm::vec3(rad, height, 0), color, glm::vec3(0, 1, 0), glm::vec2(1, int(height))));
+
+    std::vector<float> angles(numFaces, 2 * PI / numFaces);
+
+    if (degenerate) {
+        for (int i = 1; i <= 10; i++) {
+            int a = rand() % numFaces;
+            int b = rand() % numFaces;
+            float amount = min((float)(rand() % 10 + 1) * (PI / 50.0), PI / 6.0);
+
+            if (angles[a] - amount > PI / 10 && angles[b] + amount < PI) {
+                angles[a] -= amount;
+                angles[b] += amount;
+            }
+        }
+    }
+
+    float angle = 0;
+    for (int i = 0; i < numFaces; i++) {
+        angle += angles[i];
+        vertices.push_back(VertexFormat(glm::vec3(rad * cos(angle), 0, rad * sin(angle)), color, glm::vec3(0, 1, 0), glm::vec2(i % 2, 0)));
+        vertices.push_back(VertexFormat(glm::vec3(rad * cos(angle), height, rad * sin(angle)), color, glm::vec3(0, 1, 0),
+                                        glm::vec2(i % 2, int(height))));
+
+        unsigned short last = (i + 1) * 2;
+        unsigned short current = vertices.size() - 2;
+        indices.push_back(current);
+        indices.push_back(last + 1);
+        indices.push_back(last);
+
+        indices.push_back(current + 1);
+        indices.push_back(last + 1);
+        indices.push_back(current);
+
+        indices.push_back(1);
+        indices.push_back(last + 1);
+        indices.push_back(current + 1);
+    }
+
+    std::tuple<float, float, float, float> limits;
+    for (auto &vertex : vertices) {
+        std::get<0>(limits) = min(std::get<0>(limits), vertex.position.x);
+        std::get<1>(limits) = max(std::get<1>(limits), vertex.position.x);
+        std::get<2>(limits) = min(std::get<2>(limits), vertex.position.z);
+        std::get<3>(limits) = max(std::get<3>(limits), vertex.position.z);
+    }
+
+    cyl->InitFromData(vertices, indices);
+    return std::make_pair(cyl, limits);
 }

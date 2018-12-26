@@ -34,7 +34,7 @@ public:
         up = glm::vec3(0, 1, 0);
         right = glm::vec3(1, 0, 0);
 
-        position = glm::vec3(0, 10, 7);
+        position = glm::vec3(0, 4, 3);
 
         // build Projection Matrix
         projectionMatrix = glm::perspective(RADIANS(fov_deg), aspectRatio, 0.01f, 200.0f);

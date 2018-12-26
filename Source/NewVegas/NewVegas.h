@@ -5,6 +5,7 @@
 #include "Camera.h"
 #include "Objects/StreetSign.h"
 #include "Streets.h"
+#include "Buildings.h"
 
 class NewVegas : public SimpleScene
 {
@@ -17,7 +18,10 @@ public:
 private:
     Camera *camera;
     StreetSign *streetSign;
-    Streets streets;
+    Streets *streets;
+    Buildings buildings;
+    Mesh *floorMesh;
+    Texture2D *floorTexture;
 
     void FrameStart() override;
     void Update(float deltaTimeSeconds) override;

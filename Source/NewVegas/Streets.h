@@ -35,6 +35,10 @@ public:
     Texture2D *texture[2];
     std::vector<Street *> vertStreets, horizStreets;
 
+    static Streets *GetInstance();
+
+    static float StreetHalfWidth(Street *street);
+private:
     Streets();
     ~Streets();
 };

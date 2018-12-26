@@ -18,8 +18,30 @@ void NewVegas::Init()
     LoadShader("Texture", "Texture", "Texture");
     LoadShader("LightColor", "Texture", "Color");
 
+    {
+        // build floor
+        using namespace UIConstants;
+        vector<VertexFormat> vertices = {
+            VertexFormat(glm::vec3(Map::MIN, -0.01f, Map::MIN), glm::vec3(0, 1, 0), glm::vec3(0, 1, 0)),
+            VertexFormat(glm::vec3(Map::MIN, -0.01f, Map::MAX), glm::vec3(0, 1, 0), glm::vec3(0, 1, 0)),
+            VertexFormat(glm::vec3(Map::MAX, -0.01f, Map::MAX), glm::vec3(0, 1, 0), glm::vec3(0, 1, 0)),
+            VertexFormat(glm::vec3(Map::MAX, -0.01f, Map::MIN), glm::vec3(0, 1, 0), glm::vec3(0, 1, 0)),
+        };
+
+        vector<unsigned short> indices = {
+            0, 1, 2,
+            0, 2, 3
+        };
+
+        floorMesh = MeshBuilder::CreateMesh("floor", vertices, indices);
+        floorTexture = new Texture2D();
+        floorTexture->Load2D((RESOURCE_PATH::TEXTURES + "asphalt2.jpg").c_str(), GL_MIRRORED_REPEAT);
+    }
+
+
     // initialize objects
     streetSign = new StreetSign();
+    streets = Streets::GetInstance();
 
     // initialize camera
     camera = new Camera(80, window->props.aspectRatio);
@@ -39,19 +61,26 @@ void NewVegas::FrameStart()
 
 void NewVegas::Update(float deltaTimeSeconds)
 {
-    RenderTexturedMesh(streetSign->onewayMesh, shaders["Texture"],
-        glm::translate(glm::scale(glm::mat4(1), glm::vec3(0.01, 0.01, 0.01)), glm::vec3(10, -1, 0)), { streetSign->onewayTex });
+    // RenderTexturedMesh(streetSign->onewayMesh, shaders["Texture"],
+    //                    glm::translate(glm::scale(glm::mat4(1), glm::vec3(0.01, 0.01, 0.01)), glm::vec3(10, -1, 0)),
+    //                    {streetSign->onewayTex});
+    RenderTexturedMesh(floorMesh, shaders["TextureByPos"], glm::mat4(1), {floorTexture});
 
-    for (auto street : streets.vertStreets)
-        RenderTexturedMesh(street->mesh, shaders["Texture"], street->modelMatrix, { streets.texture[street->type] });
+    for (auto street : streets->vertStreets)
+        RenderTexturedMesh(street->mesh, shaders["Texture"], street->modelMatrix, {streets->texture[street->type]});
 
-    for (auto street : streets.horizStreets)
-        RenderTexturedMesh(street->mesh, shaders["Texture"], street->modelMatrix, { streets.texture[street->type] });
+    for (auto street : streets->horizStreets)
+        RenderTexturedMesh(street->mesh, shaders["Texture"], street->modelMatrix, {streets->texture[street->type]});
+
+    // render buildings
+    for (auto building : buildings.buildings)
+        for (auto comp : building->comps)
+            RenderTexturedMesh(comp.mesh, shaders["Texture"], building->globalModelMat * comp.modelMat, {comp.texture});
 }
 
 void NewVegas::FrameEnd()
 {
-    //DrawCoordinatSystem(camera->GetViewMatrix(), camera->GetProjectionMatrix());
+    // DrawCoordinatSystem(camera->GetViewMatrix(), camera->GetProjectionMatrix());
 }
 
 void NewVegas::SetShaderMVP(const Shader *shader, const glm::mat4 &modelMatrix) const
