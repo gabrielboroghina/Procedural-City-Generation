@@ -91,6 +91,9 @@
     <ClCompile Include="..\Source\NewVegas\Objects\Trees.cpp">
       <Filter>NewVegas\Objects</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\NewVegas\Objects\TrafficLights.cpp">
+      <Filter>NewVegas\Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\Core\World.h">
@@ -173,6 +176,9 @@
       <Filter>NewVegas</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\NewVegas\Objects\Trees.h">
+      <Filter>NewVegas\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\NewVegas\Objects\TrafficLights.h">
       <Filter>NewVegas\Objects</Filter>
     </ClInclude>
   </ItemGroup>

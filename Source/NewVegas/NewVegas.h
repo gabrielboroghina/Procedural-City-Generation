@@ -7,6 +7,7 @@
 #include "Streets.h"
 #include "Buildings.h"
 #include "Objects/Trees.h"
+#include "Objects/TrafficLights.h"
 
 class NewVegas : public SimpleScene
 {
@@ -25,6 +26,7 @@ private:
     Texture2D *floorTexture;
     Mesh *crossroad;
     Trees *trees;
+    TrafficLights *trafficLights;
 
     void FrameStart() override;
     void Update(float deltaTimeSeconds) override;

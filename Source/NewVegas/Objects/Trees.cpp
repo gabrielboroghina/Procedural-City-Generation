@@ -1,5 +1,5 @@
 #include "Trees.h"
-#include "Core/GPU/Mesh.h"
+
 #include "Core/Managers/ResourcePath.h"
 #include "NewVegas/Streets.h"
 #include "NewVegas/UIConstants.h"

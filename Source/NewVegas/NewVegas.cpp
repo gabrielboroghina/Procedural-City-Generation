@@ -46,6 +46,7 @@ void NewVegas::Init()
     streets = Streets::GetInstance();
     buildings = new Buildings();
     trees = new Trees();
+    trafficLights = new TrafficLights();
 }
 
 void NewVegas::FrameStart()
@@ -86,6 +87,11 @@ void NewVegas::RenderStreets()
     for (auto &modelMat : trees->modelMatrices) {
         SetShaderMVP(shaders["Texture"], modelMat);
         trees->mesh->Render();
+    }
+
+    for (auto &modelMat : trafficLights->modelMatrices) {
+        SetShaderMVP(shaders["Texture"], modelMat);
+        trafficLights->mesh->Render();
     }
 }
 

@@ -31,10 +31,10 @@ Streets::Streets()
 
     // load street textures
     texture[0] = new Texture2D();
-    texture[0]->Load2D((RESOURCE_PATH::TEXTURES + "road.png").c_str(), GL_REPEAT);
+    texture[0]->Load2D((RESOURCE_PATH::TEXTURES + "road2.png").c_str(), GL_REPEAT);
 
     texture[1] = new Texture2D();
-    texture[1]->Load2D((RESOURCE_PATH::TEXTURES + "road2.png").c_str(), GL_REPEAT);
+    texture[1]->Load2D((RESOURCE_PATH::TEXTURES + "road.png").c_str(), GL_REPEAT);
 
     vertMesh[0] = MeshBuilder::CreateVertRect(glm::vec3(0), 2 * UIConstants::Map::MAX, UIConstants::Streets::BLVD_WIDTH);
     vertMesh[1] = MeshBuilder::CreateVertRect(glm::vec3(0), 2 * UIConstants::Map::MAX, UIConstants::Streets::STR_WIDTH);
@@ -46,7 +46,7 @@ Streets::Streets()
         lastx = lastx + (rand() % 4 + 2) * UIConstants::Streets::MIN_DIST;
         if (lastx > UIConstants::Map::MAX) break;
 
-        int type = rand() % 2;
+        int type = min(rand() % 4, 1);
         vertStreets.push_back(new Street(static_cast<StreetType>(type), vertMesh[type],
                                          glm::translate(glm::mat4(1), glm::vec3(lastx, 0, 0))));
     }
@@ -58,8 +58,7 @@ Streets::Streets()
         lastz = lastz + (rand() % 4 + 2) * UIConstants::Streets::MIN_DIST;
         if (lastz > UIConstants::Map::MAX) break;
 
-        int type = rand() % 4;
-        if (type != 0) type = 1;
+        int type = min(rand() % 4, 1);
         horizStreets.push_back(new Street(static_cast<StreetType>(type), vertMesh[type],
                                           glm::translate(glm::rotate(glm::mat4(1), RADIANS(90), glm::vec3(0, 1, 0)),
                                                          glm::vec3(-lastz, 0.005f, 0))));
