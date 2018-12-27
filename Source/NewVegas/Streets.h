@@ -39,6 +39,7 @@ public:
     static Streets *GetInstance();
 
     static float StreetHalfWidth(Street *street);
+    std::tuple<float, float, float, float> ZoneBetweenStreets(int v1, int v2, int h1, int h2);
 private:
     Streets();
     ~Streets();

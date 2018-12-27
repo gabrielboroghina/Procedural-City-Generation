@@ -5,6 +5,7 @@
 #include "Core/Managers/ResourcePath.h"
 #include "UIConstants.h"
 #include "Streets.h"
+#include "Objects/Grass.h"
 
 constexpr int hTextures = 13;
 constexpr int lTextures = 10;
@@ -15,14 +16,11 @@ Buildings::Buildings()
     LoadTextures();
 
     Streets *streets = Streets::GetInstance();
+    Grass *parks = Grass::GetInstance();
     for (size_t i = 1; i < streets->horizStreets.size(); i++)
-        for (size_t j = 1; j < streets->vertStreets.size(); j++) {
-            buildings.push_back(GenerateBuilding(
-                streets->vertStreets[j - 1]->modelMatrix[3].x + Streets::StreetHalfWidth(streets->vertStreets[j - 1]),
-                streets->vertStreets[j]->modelMatrix[3].x - Streets::StreetHalfWidth(streets->vertStreets[j]),
-                streets->horizStreets[i - 1]->modelMatrix[3].z + Streets::StreetHalfWidth(streets->horizStreets[i - 1]),
-                streets->horizStreets[i]->modelMatrix[3].z - Streets::StreetHalfWidth(streets->horizStreets[i])));
-        }
+        for (size_t j = 1; j < streets->vertStreets.size(); j++)
+            if (!parks->hasPark.count(j * 1000 + i))
+                buildings.push_back(GenerateBuilding(streets->ZoneBetweenStreets(j - 1, j, i - 1, i)));
 }
 
 Buildings::~Buildings() {}
@@ -59,9 +57,12 @@ int ComputeNumberOfFaces(int type)
     return 30;
 }
 
-Building *Buildings::GenerateBuilding(float xmin, float xmax, float zmin, float zmax)
+Building *Buildings::GenerateBuilding(std::tuple<float, float, float, float> limits)
 {
     using namespace UIConstants::Buildings;
+
+    float xmin, xmax, zmin, zmax;
+    std::tie(xmin, xmax, zmin, zmax) = limits;
 
     float height = MIN_HEIGHT + (rand() % 10 + 1) * (MAX_HEIGHT - MIN_HEIGHT) / 10;
     int numFacesType = rand() % 100;

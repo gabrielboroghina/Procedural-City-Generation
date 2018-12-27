@@ -44,4 +44,14 @@ namespace Trees
 {
     const float DIST = 3;
 }
+
+namespace Cars
+{
+    const float DIST = 0.5f;
+}
+
+namespace Grass
+{
+    const int NUM_PARKS = 3;
+}
 }

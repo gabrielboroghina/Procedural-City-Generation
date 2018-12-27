@@ -8,6 +8,8 @@
 #include "Buildings.h"
 #include "Objects/Trees.h"
 #include "Objects/TrafficLights.h"
+#include "Objects/Cars.h"
+#include "Objects/Grass.h"
 
 class NewVegas : public SimpleScene
 {
@@ -27,6 +29,8 @@ private:
     Mesh *crossroad;
     Trees *trees;
     TrafficLights *trafficLights;
+    Cars *cars;
+    Grass *parks;
 
     void FrameStart() override;
     void Update(float deltaTimeSeconds) override;

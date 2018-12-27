@@ -39,5 +39,5 @@ public:
     void LoadTextures();
 
     /** Generate building inside the given rectangular area */
-    Building *GenerateBuilding(float xmin, float xmax, float zmin, float zmax);
+    Building *GenerateBuilding(std::tuple<float, float, float, float> limits);
 };

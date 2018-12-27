@@ -94,6 +94,12 @@
     <ClCompile Include="..\Source\NewVegas\Objects\TrafficLights.cpp">
       <Filter>NewVegas\Objects</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\NewVegas\Objects\Cars.cpp">
+      <Filter>NewVegas\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\NewVegas\Objects\Grass.cpp">
+      <Filter>NewVegas\Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\Core\World.h">
@@ -179,6 +185,12 @@
       <Filter>NewVegas\Objects</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\NewVegas\Objects\TrafficLights.h">
+      <Filter>NewVegas\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\NewVegas\Objects\Cars.h">
+      <Filter>NewVegas\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\NewVegas\Objects\Grass.h">
       <Filter>NewVegas\Objects</Filter>
     </ClInclude>
   </ItemGroup>

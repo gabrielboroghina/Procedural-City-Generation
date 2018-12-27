@@ -44,9 +44,11 @@ void NewVegas::Init()
     // initialize objects
     streetSign = new StreetSign();
     streets = Streets::GetInstance();
+    parks = Grass::GetInstance();
     buildings = new Buildings();
     trees = new Trees();
     trafficLights = new TrafficLights();
+    cars = new Cars();
 }
 
 void NewVegas::FrameStart()
@@ -65,6 +67,11 @@ void NewVegas::Update(float deltaTimeSeconds)
     RenderTexturedMesh(floorMesh, shaders["TextureByPos"], glm::mat4(1), {floorTexture});
 
     RenderStreets();
+
+    for (auto &instance : parks->instances) {
+        SetShaderMVP(shaders["Texture"], instance);
+        parks->mesh->Render();
+    }
 
     // render buildings
     for (auto building : buildings->buildings)
@@ -92,6 +99,11 @@ void NewVegas::RenderStreets()
     for (auto &modelMat : trafficLights->modelMatrices) {
         SetShaderMVP(shaders["Texture"], modelMat);
         trafficLights->mesh->Render();
+    }
+
+    for (auto &instance : cars->instances) {
+        SetShaderMVP(shaders["Texture"], instance.second);
+        instance.first->Render();
     }
 }
 

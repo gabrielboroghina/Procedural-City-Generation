@@ -24,6 +24,16 @@ float Streets::StreetHalfWidth(Street *street)
     return UIConstants::Streets::STR_WIDTH / 2;
 }
 
+std::tuple<float, float, float, float> Streets::ZoneBetweenStreets(int v1, int v2, int h1, int h2)
+{
+    return make_tuple(
+        vertStreets[v1]->modelMatrix[3].x + StreetHalfWidth(vertStreets[v1]),
+        vertStreets[v2]->modelMatrix[3].x - StreetHalfWidth(vertStreets[v2]),
+        horizStreets[h1]->modelMatrix[3].z + StreetHalfWidth(horizStreets[h1]),
+        horizStreets[h2]->modelMatrix[3].z - StreetHalfWidth(horizStreets[h2]));
+}
+
+
 /** Generate the streets network */
 Streets::Streets()
 {
@@ -72,7 +82,7 @@ Streets::~Streets() {}
 void Streets::InitCrossroads()
 {
     // crossroad mesh
-    crossroad = MeshBuilder::CreateRect(glm::vec3(0, 0.01f, 0), 1, 1, glm::vec3(0));
+    crossroad = MeshBuilder::CreateRect(glm::vec3(0, 0.007f, 0), 1, 1, glm::vec3(0));
 
     crossroadTex = new Texture2D();
     crossroadTex->Load2D((RESOURCE_PATH::TEXTURES + "crossroad.png").c_str(), GL_REPEAT);

@@ -37,6 +37,8 @@
     <ClCompile Include="..\Source\NewVegas\Buildings.cpp" />
     <ClCompile Include="..\Source\NewVegas\MeshBuilder.cpp" />
     <ClCompile Include="..\Source\NewVegas\NewVegas.cpp" />
+    <ClCompile Include="..\Source\NewVegas\Objects\Cars.cpp" />
+    <ClCompile Include="..\Source\NewVegas\Objects\Grass.cpp" />
     <ClCompile Include="..\Source\NewVegas\Objects\StreetSign.cpp" />
     <ClCompile Include="..\Source\NewVegas\Objects\TrafficLights.cpp" />
     <ClCompile Include="..\Source\NewVegas\Objects\Trees.cpp" />
@@ -66,6 +68,8 @@
     <ClInclude Include="..\Source\NewVegas\ITargetObserver.h" />
     <ClInclude Include="..\Source\NewVegas\MeshBuilder.h" />
     <ClInclude Include="..\Source\NewVegas\NewVegas.h" />
+    <ClInclude Include="..\Source\NewVegas\Objects\Cars.h" />
+    <ClInclude Include="..\Source\NewVegas\Objects\Grass.h" />
     <ClInclude Include="..\Source\NewVegas\Objects\StreetSign.h" />
     <ClInclude Include="..\Source\NewVegas\Objects\TrafficLights.h" />
     <ClInclude Include="..\Source\NewVegas\Objects\Trees.h" />
