@@ -25,12 +25,12 @@ float GetLight()
 	vec3 H = normalize(L + V);
 
 	// define ambient light component
-	float ambient_light = 0.75;
-	float lightColor = 1.0;
+	float ambient_light = 0.5;
+	float lightColor = 0.5;
 
 	// compute diffuse light component
 	float getLight = (dot(world_normal, L) > 0) ? 1 : 0;
-	float diffuse_light = material_kd * lightColor * max(dot(world_normal, L), 0);	
+	float diffuse_light = 700 *  material_kd * lightColor * max(dot(world_normal, L), 0);	
 
 	// compute specular light component
 	float specular_light = material_ks * lightColor * getLight * pow(max(dot(world_normal, H), 0), material_shininess);
@@ -44,9 +44,9 @@ float GetLight()
 
 void main()
 {
-    out_color = texture(textureImg0, texCoord);// GetLight();
+    out_color = texture(textureImg0, texCoord) * GetLight();
 
-    if (out_color.a < 0.5f) {
+    if (out_color.a < 0.5f) { // alpha-discard
 	    discard;
     }
 }

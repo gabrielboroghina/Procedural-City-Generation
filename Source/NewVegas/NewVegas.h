@@ -31,6 +31,8 @@ private:
     TrafficLights *trafficLights;
     Cars *cars;
     Grass *parks;
+    glm::vec3 lightPosition;
+    Mesh *light;
 
     void FrameStart() override;
     void Update(float deltaTimeSeconds) override;

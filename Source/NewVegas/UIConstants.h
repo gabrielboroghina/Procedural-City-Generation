@@ -15,7 +15,7 @@ namespace Camera
 
 namespace Light
 {
-    const glm::vec3 LIGHT_POS = glm::vec3(0, 2.5f, 0);
+    const glm::vec3 LIGHT_POS = glm::vec3(-2, 26, -2);
     const int MATERIAL_SHININESS = 30;
     const float MATERIAL_KD = 2;
     const float MATERIAL_KS = 1.4f;

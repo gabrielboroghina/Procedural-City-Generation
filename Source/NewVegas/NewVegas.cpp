@@ -1,7 +1,6 @@
 #include "NewVegas.h"
 
 #include <vector>
-#include <iostream>
 #include <Core/Engine.h>
 #include <Core/GPU/Texture2D.h>
 #include "MeshBuilder.h"
@@ -20,6 +19,7 @@ void NewVegas::Init()
 
     // initialize camera
     camera = new Camera(80, window->props.aspectRatio);
+    lightPosition = UIConstants::Light::LIGHT_POS;
 
     {
         // build floor
@@ -119,7 +119,7 @@ void NewVegas::SetShaderMVP(const Shader *shader, const glm::mat4 &modelMatrix) 
 
     // Set shader uniforms for light & material properties
     // Bind light position
-    glUniform3fv(glGetUniformLocation(shader->program, "light_position"), 1, glm::value_ptr(UIConstants::Light::LIGHT_POS));
+    glUniform3fv(glGetUniformLocation(shader->program, "light_position"), 1, glm::value_ptr(lightPosition));
 
     // Bind eye position (camera position)
     glm::vec3 eyePosition = modelMatrix * glm::vec4(camera->position, 1);
@@ -174,9 +174,19 @@ void NewVegas::RenderColoredMesh(const Mesh *mesh, const glm::mat4 &modelMatrix,
 void NewVegas::OnInputUpdate(float deltaTime, int mods)
 {
     // process camera movement
-    if (window->MouseHold(GLFW_MOUSE_BUTTON_RIGHT))
-        camera->Update(deltaTime, window->KeyHold(GLFW_KEY_W), window->KeyHold(GLFW_KEY_A), window->KeyHold(GLFW_KEY_S),
+    if (window->MouseHold(GLFW_MOUSE_BUTTON_RIGHT)) {
+        float acc = window->KeyHold(GLFW_KEY_LEFT_SHIFT) ? 4 : (window->KeyHold(GLFW_KEY_LEFT_CONTROL) ? 0.2 : 1);
+        camera->Update(acc * deltaTime, window->KeyHold(GLFW_KEY_W), window->KeyHold(GLFW_KEY_A), window->KeyHold(GLFW_KEY_S),
                        window->KeyHold(GLFW_KEY_D), window->KeyHold(GLFW_KEY_Q), window->KeyHold(GLFW_KEY_E));
+    }
+
+    float speed = 6;
+    if (window->KeyHold(GLFW_KEY_UP)) lightPosition -= glm::vec3(0, 0, -1) * deltaTime * speed;
+    if (window->KeyHold(GLFW_KEY_LEFT)) lightPosition -= glm::vec3(1, 0, 0) * deltaTime * speed;
+    if (window->KeyHold(GLFW_KEY_DOWN)) lightPosition += glm::vec3(0, 0, -1) * deltaTime * speed;
+    if (window->KeyHold(GLFW_KEY_RIGHT)) lightPosition += glm::vec3(1, 0, 0) * deltaTime * speed;
+    if (window->KeyHold(GLFW_KEY_KP_ADD)) lightPosition += glm::vec3(0, 1, 0) * deltaTime * speed;
+    if (window->KeyHold(GLFW_KEY_KP_SUBTRACT)) lightPosition -= glm::vec3(0, 1, 0) * deltaTime * speed;
 }
 
 void NewVegas::OnKeyPress(int key, int mods) {}

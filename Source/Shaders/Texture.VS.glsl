@@ -18,7 +18,7 @@ void main()
 {
     // compute world space vertex position and normal
 	world_position = (Model * vec4(v_position, 1)).xyz;
-	world_normal = normalize((Model * vec4(v_normal, 1)).xyz);
+	world_normal = normalize(mat3(Model) * v_normal);
 
 	// pass v_texture_coord as output to Fragment Shader
     texCoord = v_texture_coord;
