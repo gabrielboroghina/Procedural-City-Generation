@@ -60,7 +60,7 @@ void NewVegas::FrameStart()
 void NewVegas::Update(float deltaTimeSeconds)
 {
     // render sky
-    RenderTexturedMesh(sky, shaders["Texture"], scale(glm::mat4(1), glm::vec3((UIConstants::Map::MAX - UIConstants::Map::MIN) * sqrt(2))),
+    RenderTexturedMesh(sky, shaders["Texture"], scale(glm::mat4(1), glm::vec3((UIConstants::Map::MAX - UIConstants::Map::MIN) * float(sqrt(2)))),
                        {skyTexture});
 
     // render floor

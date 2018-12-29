@@ -16,7 +16,7 @@ void Cars::GenerateCar(float x, float z, int side)
                                                                       glm::vec3(0.0006f)),RADIANS((-1-side) * 90), glm::vec3(0, 1, 0))));
         else
             instances.push_back(std::make_pair(meshes[type],
-                                               glm::rotate(glm::scale(glm::translate(glm::mat4(1), glm::vec3(x, 0.022f, z)),
+                                               glm::rotate(glm::scale(glm::translate(glm::mat4(1), glm::vec3(x, 0.027f, z)),
                                                                       glm::vec3(0.0003f)), RADIANS(-side * 90), glm::vec3(0, 1, 0))));
     }
 }
