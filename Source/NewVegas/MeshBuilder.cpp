@@ -147,14 +147,14 @@ MeshBuilder::CreateCylinder(float height, float rad, int numFaces, bool degenera
     std::vector<unsigned short> indices, roofIndices;
 
     // centers
-    vertices.push_back(VertexFormat(glm::vec3(0, 0, 0), color, glm::vec3(0, 1, 0), glm::vec2()));
-    vertices.push_back(VertexFormat(glm::vec3(0, height, 0), color, glm::vec3(0, 1, 0), glm::vec2()));
+    vertices.emplace_back(glm::vec3(0, 0, 0), color, glm::vec3(0, 1, 0), glm::vec2());
+    vertices.emplace_back(glm::vec3(0, height, 0), color, glm::vec3(0, 1, 0), glm::vec2());
     roofVertices.push_back(*vertices.rbegin());
 
     // starting point
-    vertices.push_back(VertexFormat(glm::vec3(rad, 0, 0), color, glm::vec3(rad, 0, 0), glm::vec2(1, 0)));
-    vertices.push_back(VertexFormat(glm::vec3(rad, height, 0), color, glm::vec3(rad, 0, 0), glm::vec2(1, int(height))));
-    roofVertices.push_back(VertexFormat(glm::vec3(rad, height, 0), color, glm::vec3(0, 1, 0), glm::vec2(1, int(height))));
+    vertices.emplace_back(glm::vec3(rad, 0, 0), color, glm::vec3(rad, 0, 0), glm::vec2(1, 0));
+    vertices.emplace_back(glm::vec3(rad, height, 0), color, glm::vec3(rad, 0, 0), glm::vec2(1, int(height)));
+    roofVertices.emplace_back(glm::vec3(rad, height, 0), color, glm::vec3(0, 1, 0), glm::vec2(1, int(height)));
 
     std::vector<float> angles(numFaces, 2 * PI / numFaces);
 
@@ -174,13 +174,13 @@ MeshBuilder::CreateCylinder(float height, float rad, int numFaces, bool degenera
     float angle = 0;
     for (int i = 0; i < numFaces; i++) {
         angle += angles[i];
-        vertices.push_back(VertexFormat(glm::vec3(rad * cos(angle), 0, rad * sin(angle)), color,
-                                        glm::vec3(rad * cos(angle), 0, rad * sin(angle)), glm::vec2(i % 2, 0)));
-        vertices.push_back(VertexFormat(glm::vec3(rad * cos(angle), height, rad * sin(angle)), color,
-                                        glm::vec3(rad * cos(angle), 0, rad * sin(angle)),
-                                        glm::vec2(i % 2, int(height))));
-        roofVertices.push_back(VertexFormat(glm::vec3(rad * cos(angle), height, rad * sin(angle)), color, glm::vec3(0, 1, 0),
-                                            glm::vec2(i % 2, int(height))));
+        vertices.emplace_back(glm::vec3(rad * cos(angle), 0, rad * sin(angle)), color,
+                              glm::vec3(rad * cos(angle), 0, rad * sin(angle)), glm::vec2(i % 2, 0));
+        vertices.emplace_back(glm::vec3(rad * cos(angle), height, rad * sin(angle)), color,
+                              glm::vec3(rad * cos(angle), 0, rad * sin(angle)),
+                              glm::vec2(i % 2, int(height)));
+        roofVertices.emplace_back(glm::vec3(rad * cos(angle), height, rad * sin(angle)), color, glm::vec3(0, 1, 0),
+                                  glm::vec2(i % 2, int(height)));
 
         unsigned short last = (i + 1) * 2;
         unsigned short current = unsigned short(vertices.size() - 2);
@@ -197,6 +197,7 @@ MeshBuilder::CreateCylinder(float height, float rad, int numFaces, bool degenera
         roofIndices.push_back(i + 2);
     }
 
+    // get the rectangle which borders the mesh
     std::tuple<float, float, float, float> limits;
     for (auto &vertex : vertices) {
         std::get<0>(limits) = min(std::get<0>(limits), vertex.position.x);

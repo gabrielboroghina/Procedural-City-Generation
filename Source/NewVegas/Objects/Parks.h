@@ -10,7 +10,7 @@ class Parks
 public:
     Mesh *mesh;
     std::vector<glm::mat4> instances;
-    std::unordered_set<int> hasPark;
+    std::unordered_set<int> hasPark; // checks if a cell in the streets' grid contains a park
 
     static Parks *GetInstance();
 

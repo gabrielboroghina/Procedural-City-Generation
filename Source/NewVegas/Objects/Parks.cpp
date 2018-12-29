@@ -6,7 +6,7 @@
 #include "NewVegas/UIConstants.h"
 #include <tuple>
 
-static Parks *instance = nullptr;
+static Parks *instance = nullptr; // singleton instance
 
 Parks *Parks::GetInstance()
 {
@@ -17,6 +17,7 @@ Parks *Parks::GetInstance()
 
 Parks::Parks()
 {
+    // load grass 3D model
     mesh = new Mesh("grass");
     mesh->LoadMesh(RESOURCE_PATH::MODELS + "Vegetation", "grass.obj");
 
@@ -43,6 +44,7 @@ void Parks::GeneratePark(std::tuple<float, float, float, float> limits)
     std::tie(xmin, xmax, zmin, zmax) = limits;
 
     using namespace UIConstants::Grass;
+    // fill the rectangular region with grass objects
     for (float x = xmin + MARGINS; x <= xmax - MARGINS; x += 0.07f)
         for (float z = zmin + MARGINS; z <= zmax - MARGINS; z += 0.07f)
             instances.push_back(glm::scale(glm::translate(glm::mat4(1), glm::vec3(x, 0, z)), glm::vec3(0.1f, 0.02f,0.1f)));

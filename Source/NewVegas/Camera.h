@@ -1,7 +1,6 @@
 #pragma once
 
 #include <include/glm.h>
-#include "ITargetObserver.h"
 #include "include/math.h"
 #include "UIConstants.h"
 
@@ -18,7 +17,7 @@ enum CameraLayout
     TopDown
 };
 
-class Camera : public ITargetObserver
+class Camera
 {
     float distanceToTarget;
     glm::mat4 projectionMatrix;
@@ -46,19 +45,6 @@ public:
     {
         pos = glm::normalize(pos);
         return pos.x * forward + pos.y * up + pos.z * right;
-    }
-
-    void SetTarget(glm::vec3 targetPos, glm::vec3 dir, float distToTarget) override
-    {
-        distanceToTarget = distToTarget;
-
-        this->forward = glm::normalize(-dir);
-        this->right = glm::rotate(glm::mat4(1), RADIANS(-90), glm::vec3(0, 1, 0)) * glm::vec4(forward, 1);
-        this->right.y = 0;
-        right = glm::normalize(right);
-        this->up = glm::normalize(glm::cross(right, forward));
-
-        position = targetPos - forward * distanceToTarget / glm::length(forward);
     }
 
     /** Move the camera */
@@ -95,13 +81,6 @@ public:
             // translate the camera up
             TranslateUpword(distance);
         }
-    }
-
-    /** Track the target in third person mode */
-    void UpdatePos(glm::vec3 movement) override
-    {
-        if (type == ThirdPerson)
-            position += movement;
     }
 
     /** Switch between First Person and Third Person camera modes */

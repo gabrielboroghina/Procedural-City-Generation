@@ -23,6 +23,7 @@ void Cars::GenerateCar(float x, float z, int side)
 
 Cars::Cars()
 {
+    // load 3D models
     Mesh *mesh = new Mesh("car1");
     mesh->LoadMesh(RESOURCE_PATH::MODELS + "Cars/1", "obj_camry.obj");
     meshes.push_back(mesh);
@@ -34,6 +35,7 @@ Cars::Cars()
     }
 
     Streets *streets = Streets::GetInstance();
+    // generate cars on the horizontal streets
     for (auto hStreet : streets->horizStreets)
         for (float x = UIConstants::Map::MIN + (rand() % 10 + 3) * 0.05f; x <= UIConstants::Map::MAX - 0.3; x += UIConstants::Cars::DIST) {
             int side = rand() % 2;
@@ -41,6 +43,7 @@ Cars::Cars()
             GenerateCar(x, hStreet->modelMatrix[3].z + 0.03f * side, side);
         }
 
+    // generate cars on the vertical streets
     for (auto vStreet : streets->vertStreets)
         for (float z = UIConstants::Map::MIN + (rand() % 10 + 3) * 0.05f; z <= UIConstants::Map::MAX - 0.3; z += UIConstants::Cars::DIST) {
             int side = rand() % 2;
@@ -49,4 +52,8 @@ Cars::Cars()
         }
 }
 
-Cars::~Cars() {}
+Cars::~Cars()
+{
+    for (auto &mesh : meshes)
+        delete mesh;
+}

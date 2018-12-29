@@ -8,16 +8,17 @@
 #include "Objects/Parks.h"
 #include "include/math.h"
 
-constexpr int hTextures = 13;
-constexpr int lTextures = 10;
+constexpr int hTextures = 13; // number of very-high building textures
+constexpr int lTextures = 10; // number of normal building textures
 
 Buildings::Buildings()
 {
-    using namespace UIConstants::Streets;
     LoadTextures();
 
     Streets *streets = Streets::GetInstance();
     Parks *parks = Parks::GetInstance();
+
+    // generate a building in each cell that doesn't contain a park
     for (unsigned int i = 1; i < streets->horizStreets.size(); i++)
         for (unsigned int j = 1; j < streets->vertStreets.size(); j++)
             if (!parks->hasPark.count(j * 1000 + i))
@@ -48,7 +49,7 @@ void Buildings::LoadTextures()
     roofTexture->Load2D((RESOURCE_PATH::TEXTURES + "roof.jpg").c_str(), GL_REPEAT);
 }
 
-/** Probabilistic chosen number of faces */
+/// Probabilistic chosen number of faces
 int ComputeNumberOfFaces(int type)
 {
     if (type < 10) return 3;
@@ -58,18 +59,17 @@ int ComputeNumberOfFaces(int type)
     return 30;
 }
 
-void Buildings::GenerateSpot(Building *building, int ang, float cylRad, float height)
+void Buildings::GenerateSpot(Building *building, int ang, float cylRad, float height) const
 {
-    glm::vec3 spot_pos, light_dir;
-
     cylRad += UIConstants::Light::SPOT_DIST_ADDITION;
-    spot_pos = glm::vec3(building->globalModelMat * glm::vec4(cylRad * cos(RADIANS(ang)), height + (rand() % 4) * 0.1,
-                                                              cylRad * sin(RADIANS(ang)), 1));
-    light_dir = glm::normalize(glm::vec3(-0.6 * cos(RADIANS(ang)), -1, -0.6 * sin(RADIANS(ang))));
+    glm::vec3 spot_pos = glm::vec3(building->globalModelMat * glm::vec4(cylRad * cos(RADIANS(ang)), height + (rand() % 4) * 0.1,
+                                                                        cylRad * sin(RADIANS(ang)), 1));
+    glm::vec3 light_dir = glm::normalize(glm::vec3(-0.6 * cos(RADIANS(ang)), -1, -0.6 * sin(RADIANS(ang)))); // oblique light direction
+
     building->spots.push_back(make_pair(spot_pos, light_dir));
 }
 
-Building *Buildings::GenerateBuilding(std::tuple<float, float, float, float> limits)
+Building *Buildings::GenerateBuilding(const std::tuple<float, float, float, float> &limits) const
 {
     using namespace UIConstants::Buildings;
 
@@ -88,11 +88,15 @@ Building *Buildings::GenerateBuilding(std::tuple<float, float, float, float> lim
     // place the building in the desired area
     float _x, x, _z, z;
     std::tie(_x, x, _z, z) = get<2>(buildingCyl);
+
+    // scale the building so that to fit in the rectangular area
     float scaleFactor = min((xmax - xmin) / (x - _x), (zmax - zmin) / (z - _z));
     glm::mat4 scaleMat = glm::scale(glm::mat4(1), glm::vec3(scaleFactor, 1, scaleFactor));
+
+    // move the building in the specified rectangular area
     glm::mat4 translateMat = glm::translate(glm::mat4(1), glm::vec3(xmin - _x * (xmax - xmin) / (x - _x), 0,
                                                                     zmin - _z * (zmax - zmin) / (z - _z)));
-    glm::mat4 globalModelMat = translateMat * scaleMat;
+    glm::mat4 globalModelMat = translateMat * scaleMat; // the model matrix to be applied for each of the building's components
 
     Building *building = new Building(globalModelMat);
     building->AddComp(mesh, tex, glm::mat4(1));
@@ -115,7 +119,7 @@ Building *Buildings::GenerateBuilding(std::tuple<float, float, float, float> lim
         building->AddComp(get<1>(buildingCyl), roofTexture, transform);
     }
 
-    // generate spotlights
+    // generate spotlights for building
     int ang = rand() % 120;
     GenerateSpot(building, ang, scaleFactor, top);
     GenerateSpot(building, ang + 120, scaleFactor, top);

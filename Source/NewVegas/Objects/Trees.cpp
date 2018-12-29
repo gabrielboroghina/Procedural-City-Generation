@@ -6,11 +6,14 @@
 
 Trees::Trees()
 {
+    // load 3D model
     mesh = new Mesh("tree");
     mesh->LoadMesh(RESOURCE_PATH::MODELS + "Tree", "tree.obj");
 
     Streets *streets = Streets::GetInstance();
-    float offset = UIConstants::Streets::STR_WIDTH / 2 + 0.03f;
+    const float offset = UIConstants::Streets::STR_WIDTH / 2 + 0.03f;
+
+    // generate pseudo-random trees on the horizontal streets
     for (auto hStreet : streets->horizStreets)
         for (float x = UIConstants::Map::MIN + 0.3f; x <= UIConstants::Map::MAX - 0.3f; x += UIConstants::Trees::DIST) {
             int side = rand() % 3 - 1;
@@ -29,4 +32,7 @@ Trees::Trees()
         }
 }
 
-Trees::~Trees() {}
+Trees::~Trees()
+{
+    delete mesh;
+}

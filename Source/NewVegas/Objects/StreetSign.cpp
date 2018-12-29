@@ -11,6 +11,7 @@ StreetSign::StreetSign()
     std::string objList[] = {"neuro_stop_obj.obj", "neuro_pedestrian_obj.obj", "neuro_oneway_obj.obj"};
     std::string texList[] = {"neuro_stop_diffuse.jpg", "neuro_pedestrian_diffuse.jpg", "neuro_oneway_diffuse.jpg"};
 
+    // load 3D models
     for (int i = 0; i < 3; i++) {
         mesh = new Mesh("StreetSign");
         mesh->LoadMesh(RESOURCE_PATH::MODELS + "StreetSign", objList[i]);

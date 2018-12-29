@@ -160,9 +160,6 @@
     <ClInclude Include="..\Source\NewVegas\Camera.h">
       <Filter>NewVegas</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\NewVegas\ITargetObserver.h">
-      <Filter>NewVegas</Filter>
-    </ClInclude>
     <ClInclude Include="..\Source\NewVegas\MeshBuilder.h">
       <Filter>NewVegas</Filter>
     </ClInclude>
@@ -211,9 +208,6 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\Source\Shaders\TextureSpotlight.FS.glsl">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\Source\Shaders\TextureSpotlight.VS.glsl">
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\Source\Shaders\TextureLight.FS.glsl">

@@ -6,10 +6,10 @@
 class StreetSign
 {
 public:
-    std::vector<std::pair<Mesh *, Texture2D *>> signModels;
-
+    std::vector<std::pair<Mesh *, Texture2D *>> signModels; // 3D models
     std::vector<std::pair<std::pair<Mesh *, Texture2D *>, glm::mat4>> signs;
     Mesh *tree;
+
     StreetSign();
     ~StreetSign();
 };

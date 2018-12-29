@@ -6,11 +6,12 @@
 
 TrafficLights::TrafficLights()
 {
+    // load 3D model
     mesh = new Mesh("semaphore");
     mesh->LoadMesh(RESOURCE_PATH::MODELS + "Trafficlight", "traffic_light.obj");
 
     Streets *streets = Streets::GetInstance();
-    float offset = UIConstants::Streets::STR_WIDTH / 2 + 0.03f;
+    const float offset = UIConstants::Streets::STR_WIDTH / 2 + 0.03f;
     for (auto hStreet : streets->horizStreets)
         for (auto vStreet : streets->vertStreets) {
             int side = rand() % 3 - 1;
@@ -22,4 +23,7 @@ TrafficLights::TrafficLights()
         }
 }
 
-TrafficLights::~TrafficLights() {}
+TrafficLights::~TrafficLights()
+{
+    delete mesh;
+}
