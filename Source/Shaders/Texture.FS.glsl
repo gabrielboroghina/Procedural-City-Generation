@@ -46,7 +46,7 @@ void main()
 {
     out_color = texture(textureImg0, texCoord) * GetLight();
 
-    if (out_color.a < 0.5f) { // alpha-discard
+    if (out_color.a < 0.3f) { // alpha-discard
 	    discard;
     }
 }

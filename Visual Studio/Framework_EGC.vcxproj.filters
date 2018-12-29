@@ -97,7 +97,7 @@
     <ClCompile Include="..\Source\NewVegas\Objects\Cars.cpp">
       <Filter>NewVegas\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\NewVegas\Objects\Grass.cpp">
+    <ClCompile Include="..\Source\NewVegas\Objects\Parks.cpp">
       <Filter>NewVegas\Objects</Filter>
     </ClCompile>
   </ItemGroup>
@@ -190,7 +190,7 @@
     <ClInclude Include="..\Source\NewVegas\Objects\Cars.h">
       <Filter>NewVegas\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\NewVegas\Objects\Grass.h">
+    <ClInclude Include="..\Source\NewVegas\Objects\Parks.h">
       <Filter>NewVegas\Objects</Filter>
     </ClInclude>
   </ItemGroup>
@@ -208,6 +208,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\Source\Shaders\Color.FS.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Source\Shaders\TextureSpotlight.FS.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Source\Shaders\TextureSpotlight.VS.glsl">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

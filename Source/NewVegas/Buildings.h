@@ -15,7 +15,7 @@ public:
 
     std::vector<Comp> comps;
     glm::mat4 globalModelMat;
-
+    std::vector<std::pair<glm::vec3, glm::vec3>> spots;
 
     Building(const glm::mat4 &global_model_mat)
         : globalModelMat(global_model_mat) {}
@@ -40,4 +40,5 @@ public:
 
     /** Generate building inside the given rectangular area */
     Building *GenerateBuilding(std::tuple<float, float, float, float> limits);
+    void GenerateSpot(Building *building, int ang, float cylRad, float height);
 };

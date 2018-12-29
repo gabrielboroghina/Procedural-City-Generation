@@ -162,7 +162,7 @@ MeshBuilder::CreateCylinder(float height, float rad, int numFaces, bool degenera
         for (int i = 1; i <= 10; i++) {
             int a = rand() % numFaces;
             int b = rand() % numFaces;
-            float amount = min((float)(rand() % 10 + 1) * (PI / 50.0), PI / 6.0);
+            float amount = min((float)(rand() % 10 + 1) * (PI / 50.0f), PI / 6.0f);
 
             if (angles[a] - amount > PI / 10 && angles[b] + amount < PI) {
                 angles[a] -= amount;
@@ -183,7 +183,7 @@ MeshBuilder::CreateCylinder(float height, float rad, int numFaces, bool degenera
                                             glm::vec2(i % 2, int(height))));
 
         unsigned short last = (i + 1) * 2;
-        unsigned short current = vertices.size() - 2;
+        unsigned short current = unsigned short(vertices.size() - 2);
         indices.push_back(current);
         indices.push_back(last + 1);
         indices.push_back(last);

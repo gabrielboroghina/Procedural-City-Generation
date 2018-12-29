@@ -38,7 +38,7 @@
     <ClCompile Include="..\Source\NewVegas\MeshBuilder.cpp" />
     <ClCompile Include="..\Source\NewVegas\NewVegas.cpp" />
     <ClCompile Include="..\Source\NewVegas\Objects\Cars.cpp" />
-    <ClCompile Include="..\Source\NewVegas\Objects\Grass.cpp" />
+    <ClCompile Include="..\Source\NewVegas\Objects\Parks.cpp" />
     <ClCompile Include="..\Source\NewVegas\Objects\StreetSign.cpp" />
     <ClCompile Include="..\Source\NewVegas\Objects\TrafficLights.cpp" />
     <ClCompile Include="..\Source\NewVegas\Objects\Trees.cpp" />
@@ -69,7 +69,7 @@
     <ClInclude Include="..\Source\NewVegas\MeshBuilder.h" />
     <ClInclude Include="..\Source\NewVegas\NewVegas.h" />
     <ClInclude Include="..\Source\NewVegas\Objects\Cars.h" />
-    <ClInclude Include="..\Source\NewVegas\Objects\Grass.h" />
+    <ClInclude Include="..\Source\NewVegas\Objects\Parks.h" />
     <ClInclude Include="..\Source\NewVegas\Objects\StreetSign.h" />
     <ClInclude Include="..\Source\NewVegas\Objects\TrafficLights.h" />
     <ClInclude Include="..\Source\NewVegas\Objects\Trees.h" />
@@ -83,6 +83,8 @@
     <None Include="..\Source\Shaders\Texture.VS.glsl" />
     <None Include="..\Source\Shaders\TextureByPos.FS.glsl" />
     <None Include="..\Source\Shaders\TextureByPos.VS.glsl" />
+    <None Include="..\Source\Shaders\TextureSpotlight.FS.glsl" />
+    <None Include="..\Source\Shaders\TextureSpotlight.VS.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\README.txt" />

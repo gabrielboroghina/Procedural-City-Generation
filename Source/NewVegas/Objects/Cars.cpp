@@ -12,7 +12,7 @@ void Cars::GenerateCar(float x, float z, int side)
         int type = rand() % meshes.size();
         if (type == 0)
             instances.push_back(std::make_pair(meshes[type],
-                                               glm::rotate(glm::scale(glm::translate(glm::mat4(1), glm::vec3(x + 0.01f, 0.02f, z + 0.01f)),
+                                               glm::rotate(glm::scale(glm::translate(glm::mat4(1), glm::vec3(x + 0.01f, 0.005f, z + 0.01f)),
                                                                       glm::vec3(0.0006f)),RADIANS((-1-side) * 90), glm::vec3(0, 1, 0))));
         else
             instances.push_back(std::make_pair(meshes[type],

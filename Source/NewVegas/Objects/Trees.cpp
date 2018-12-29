@@ -12,7 +12,7 @@ Trees::Trees()
     Streets *streets = Streets::GetInstance();
     float offset = UIConstants::Streets::STR_WIDTH / 2 + 0.03f;
     for (auto hStreet : streets->horizStreets)
-        for (float x = UIConstants::Map::MIN + 0.3; x <= UIConstants::Map::MAX - 0.3; x += UIConstants::Trees::DIST) {
+        for (float x = UIConstants::Map::MIN + 0.3f; x <= UIConstants::Map::MAX - 0.3f; x += UIConstants::Trees::DIST) {
             int side = rand() % 3 - 1;
 
             for (auto vStreet : streets->vertStreets)

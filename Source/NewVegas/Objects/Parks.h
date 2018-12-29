@@ -15,5 +15,5 @@ public:
     static Parks *GetInstance();
 
     ~Parks();
-    void GenerateGrass(std::tuple<float, float, float, float> limits);
+    void GeneratePark(std::tuple<float, float, float, float> limits);
 };

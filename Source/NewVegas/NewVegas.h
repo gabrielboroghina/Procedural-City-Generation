@@ -9,7 +9,7 @@
 #include "Objects/Trees.h"
 #include "Objects/TrafficLights.h"
 #include "Objects/Cars.h"
-#include "Objects/Grass.h"
+#include "Objects/Parks.h"
 
 class NewVegas : public SimpleScene
 {
@@ -30,7 +30,7 @@ private:
     Trees *trees;
     TrafficLights *trafficLights;
     Cars *cars;
-    Grass *parks;
+    Parks *parks;
     glm::vec3 lightPosition;
     Mesh *light;
 
@@ -39,11 +39,10 @@ private:
     void FrameEnd() override;
 
     void SetShaderMVP(const Shader *shader, const glm::mat4 &modelMatrix) const;
+    void SetShaderLightMVP(const Shader *shader, const glm::mat4 &modelMatrix, std::vector<std::pair<glm::vec3, glm::vec3>> spots) const;
 
     void RenderTexturedMesh(const Mesh *mesh, const Shader *shader, const glm::mat4 &modelMatrix,
-                            const std::vector<Texture2D *> &textures) const;
-
-    void RenderColoredMesh(const Mesh *mesh, const glm::mat4 &modelMatrix, const glm::vec3 &color) const;
+                            const std::vector<Texture2D *> &textures, const std::vector<std::pair<glm::vec3, glm::vec3>> &spots = {}) const;
 
     void RenderStreets();
 

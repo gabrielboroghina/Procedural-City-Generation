@@ -16,9 +16,13 @@ namespace Camera
 namespace Light
 {
     const glm::vec3 LIGHT_POS = glm::vec3(-2, 26, -2);
-    const int MATERIAL_SHININESS = 30;
+    
+    const int MATERIAL_SHININESS = 10;
     const float MATERIAL_KD = 2;
     const float MATERIAL_KS = 1.4f;
+    
+    const float SPOT_ANGLE = 30;
+    const float SPOT_DIST_ADDITION = 0.7f;
 }
 
 namespace Map
@@ -53,5 +57,6 @@ namespace Cars
 namespace Grass
 {
     const int NUM_PARKS = 3;
+    const float MARGINS = 0.1f;
 }
 }

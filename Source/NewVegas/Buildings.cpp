@@ -5,7 +5,8 @@
 #include "Core/Managers/ResourcePath.h"
 #include "UIConstants.h"
 #include "Streets.h"
-#include "Objects/Grass.h"
+#include "Objects/Parks.h"
+#include "include/math.h"
 
 constexpr int hTextures = 13;
 constexpr int lTextures = 10;
@@ -16,7 +17,7 @@ Buildings::Buildings()
     LoadTextures();
 
     Streets *streets = Streets::GetInstance();
-    Grass *parks = Grass::GetInstance();
+    Parks *parks = Parks::GetInstance();
     for (size_t i = 1; i < streets->horizStreets.size(); i++)
         for (size_t j = 1; j < streets->vertStreets.size(); j++)
             if (!parks->hasPark.count(j * 1000 + i))
@@ -55,6 +56,17 @@ int ComputeNumberOfFaces(int type)
     if (type < 80) return 5;
     if (type < 90) return 6;
     return 30;
+}
+
+void Buildings::GenerateSpot(Building *building, int ang, float cylRad, float height)
+{
+    glm::vec3 spot_pos, light_dir;
+
+    cylRad += UIConstants::Light::SPOT_DIST_ADDITION;
+    spot_pos = glm::vec3(building->globalModelMat * glm::vec4(cylRad * cos(RADIANS(ang)), height + (rand() % 4) * 0.1,
+                                                              cylRad * sin(RADIANS(ang)), 1));
+    light_dir = glm::normalize(glm::vec3(-0.6 * cos(RADIANS(ang)), -1, -0.6 * sin(RADIANS(ang))));
+    building->spots.push_back(make_pair(spot_pos, light_dir));
 }
 
 Building *Buildings::GenerateBuilding(std::tuple<float, float, float, float> limits)
@@ -102,6 +114,12 @@ Building *Buildings::GenerateBuilding(std::tuple<float, float, float, float> lim
         building->AddComp(mesh, tex, transform);
         building->AddComp(get<1>(buildingCyl), roofTexture, transform);
     }
+
+    // generate spotlights
+    int ang = rand() % 120;
+    GenerateSpot(building, ang, scaleFactor, top);
+    GenerateSpot(building, ang + 120, scaleFactor, top);
+    GenerateSpot(building, ang + 240, scaleFactor, top);
 
     return building;
 }
