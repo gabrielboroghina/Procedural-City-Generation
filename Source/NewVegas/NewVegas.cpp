@@ -15,32 +15,25 @@ void NewVegas::Init()
 {
     LoadShader("TextureByPos", "TextureByPos", "TextureByPos");
     LoadShader("Texture", "Texture", "Texture");
-    LoadShader("LightColor", "Texture", "Color");
+    LoadShader("TextureLight", "Texture", "TextureLight");
     LoadShader("TextureSpotlight", "Texture", "TextureSpotlight");
 
     // initialize camera
     camera = new Camera(80, window->props.aspectRatio);
-    lightPosition = UIConstants::Light::LIGHT_POS;
 
-    {
-        // build floor
-        using namespace UIConstants;
-        vector<VertexFormat> vertices = {
-            VertexFormat(glm::vec3(Map::MIN, -0.01f, Map::MIN), glm::vec3(0, 1, 0), glm::vec3(0, 1, 0)),
-            VertexFormat(glm::vec3(Map::MIN, -0.01f, Map::MAX), glm::vec3(0, 1, 0), glm::vec3(0, 1, 0)),
-            VertexFormat(glm::vec3(Map::MAX, -0.01f, Map::MAX), glm::vec3(0, 1, 0), glm::vec3(0, 1, 0)),
-            VertexFormat(glm::vec3(Map::MAX, -0.01f, Map::MIN), glm::vec3(0, 1, 0), glm::vec3(0, 1, 0)),
-        };
+    // build sky
+    sky = new Mesh("sky");
+    sky->LoadMesh(RESOURCE_PATH::MODELS + "Primitives", "sphere.obj");
+    sunPosition = UIConstants::Light::LIGHT_POS;
 
-        vector<unsigned short> indices = {
-            0, 1, 2,
-            0, 2, 3
-        };
+    skyTexture = new Texture2D();
+    skyTexture->Load2D((RESOURCE_PATH::TEXTURES + "sky.png").c_str(), GL_MIRRORED_REPEAT);
 
-        floorMesh = MeshBuilder::CreateMesh("floor", vertices, indices);
-        floorTexture = new Texture2D();
-        floorTexture->Load2D((RESOURCE_PATH::TEXTURES + "asphalt2.jpg").c_str(), GL_MIRRORED_REPEAT);
-    }
+    // build floor
+    using namespace UIConstants::Map;
+    floorMesh = MeshBuilder::CreateRect(glm::vec3(0, -0.01f, 0), MAX - MIN, MAX - MIN);
+    floorTexture = new Texture2D();
+    floorTexture->Load2D((RESOURCE_PATH::TEXTURES + "asphalt2.jpg").c_str(), GL_MIRRORED_REPEAT);
 
     // initialize objects
     streetSign = new StreetSign();
@@ -56,6 +49,7 @@ void NewVegas::FrameStart()
 {
     // clears the color buffer (using the previously set color) and depth buffer
     glClearColor(0, 0, 0, 1);
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glm::ivec2 resolution = window->GetResolution();
@@ -65,63 +59,82 @@ void NewVegas::FrameStart()
 
 void NewVegas::Update(float deltaTimeSeconds)
 {
+    // render sky
+    RenderTexturedMesh(sky, shaders["Texture"], scale(glm::mat4(1), glm::vec3((UIConstants::Map::MAX - UIConstants::Map::MIN) * sqrt(2))),
+                       {skyTexture});
+
+    // render floor
     RenderTexturedMesh(floorMesh, shaders["TextureByPos"], glm::mat4(1), {floorTexture});
 
     RenderStreets();
 
+    // render parks
     for (auto &instance : parks->instances) {
-        SetShaderMVP(shaders["Texture"], instance);
+        SetShaderMVP(shaders["TextureLight"], instance);
         parks->mesh->Render();
     }
 
     // render buildings
-    for (auto building : buildings->buildings)
-        for (auto comp : building->comps)
-            RenderTexturedMesh(comp.mesh, shaders["TextureSpotlight"], building->globalModelMat * comp.modelMat, {comp.texture},
-                               building->spots);
+    for (auto &building : buildings->buildings)
+        for (auto &comp : building->comps)
+            RenderTexturedMesh(comp.mesh, shaders["TextureSpotlight"], building->globalModelMat * comp.modelMat,
+                               {comp.texture}, building->spots);
 }
 
 void NewVegas::RenderStreets()
 {
-    for (auto street : streets->vertStreets)
-        RenderTexturedMesh(street->mesh, shaders["Texture"], street->modelMatrix, {streets->texture[street->type]});
+    for (auto &street : streets->vertStreets)
+        RenderTexturedMesh(street->mesh, shaders["TextureLight"], street->modelMatrix, {streets->texture[street->type]});
 
-    for (auto street : streets->horizStreets)
-        RenderTexturedMesh(street->mesh, shaders["Texture"], street->modelMatrix, {streets->texture[street->type]});
+    for (auto &street : streets->horizStreets)
+        RenderTexturedMesh(street->mesh, shaders["TextureLight"], street->modelMatrix, {streets->texture[street->type]});
 
     for (auto &crossroadInstance : streets->crossroadTransf)
-        RenderTexturedMesh(streets->crossroad, shaders["Texture"], crossroadInstance, {streets->crossroadTex});
+        RenderTexturedMesh(streets->crossroad, shaders["TextureLight"], crossroadInstance, {streets->crossroadTex});
 
     // render street objects
     for (auto &modelMat : trees->modelMatrices) {
-        SetShaderMVP(shaders["Texture"], modelMat);
+        SetShaderMVP(shaders["TextureLight"], modelMat);
         trees->mesh->Render();
     }
 
     for (auto &modelMat : trafficLights->modelMatrices) {
-        SetShaderMVP(shaders["Texture"], modelMat);
+        SetShaderMVP(shaders["TextureLight"], modelMat);
         trafficLights->mesh->Render();
     }
 
     for (auto &instance : cars->instances) {
-        SetShaderMVP(shaders["Texture"], instance.second);
+        SetShaderMVP(shaders["TextureLight"], instance.second);
         instance.first->Render();
     }
 }
 
-void NewVegas::FrameEnd()
+void NewVegas::FrameEnd() {}
+
+void NewVegas::BindCameraMaterialMVP(const Shader *shader, const glm::mat4 &modelMatrix) const
 {
-    // DrawCoordinatSystem(camera->GetViewMatrix(), camera->GetProjectionMatrix());
+    // bind eye position (camera position)
+    glm::vec3 eyePosition = modelMatrix * glm::vec4(camera->position, 1);
+    glUniform3fv(glGetUniformLocation(shader->program, "eye_position"), 1, glm::value_ptr(eyePosition));
+
+    // bind material property uniforms (shininess, kd, ks) 
+    glUniform1i(glGetUniformLocation(shader->program, "material_shininess"), UIConstants::Light::MATERIAL_SHININESS);
+    glUniform1f(glGetUniformLocation(shader->program, "material_kd"), UIConstants::Light::MATERIAL_KD);
+    glUniform1f(glGetUniformLocation(shader->program, "material_ks"), UIConstants::Light::MATERIAL_KS);
+
+    // bind model, view and projection matrices
+    glUniformMatrix4fv(shader->loc_model_matrix, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+    glUniformMatrix4fv(shader->loc_view_matrix, 1, GL_FALSE, glm::value_ptr(camera->GetViewMatrix()));
+    glUniformMatrix4fv(shader->loc_projection_matrix, 1, GL_FALSE, glm::value_ptr(camera->GetProjectionMatrix()));
 }
 
-void NewVegas::SetShaderLightMVP(const Shader *shader, const glm::mat4 &modelMatrix, vector<pair<glm::vec3, glm::vec3>> spots) const
+void NewVegas::SetShaderSpotsMVP(const Shader *shader, const glm::mat4 &modelMatrix, vector<pair<glm::vec3, glm::vec3>> spots) const
 {
-    // render an object using the specified shader and the specified position
     glUseProgram(shader->program);
 
-    // Set shader uniforms for light & material properties
-    // Bind light position
-    glUniform3fv(glGetUniformLocation(shader->program, "sun_pos"), 1, glm::value_ptr(lightPosition));
+    // set shader uniforms for light & material properties
+    // bind sun position
+    glUniform3fv(glGetUniformLocation(shader->program, "sun_pos"), 1, glm::value_ptr(sunPosition));
 
     for (size_t i = 0; i < spots.size(); i++) {
         glUniform3fv(glGetUniformLocation(shader->program, ("light" + to_string(i + 1) + "_pos").c_str()), 1,
@@ -131,43 +144,22 @@ void NewVegas::SetShaderLightMVP(const Shader *shader, const glm::mat4 &modelMat
     }
     glUniform1f(glGetUniformLocation(shader->program, "spot_angle"), UIConstants::Light::SPOT_ANGLE);
 
-    // Bind eye position (camera position)
-    glm::vec3 eyePosition = modelMatrix * glm::vec4(camera->position, 1);
-    glUniform3fv(glGetUniformLocation(shader->program, "eye_position"), 1, glm::value_ptr(eyePosition));
-
-    // Bind material property uniforms (shininess, kd, ks) 
-    glUniform1i(glGetUniformLocation(shader->program, "material_shininess"), UIConstants::Light::MATERIAL_SHININESS);
-    glUniform1f(glGetUniformLocation(shader->program, "material_kd"), UIConstants::Light::MATERIAL_KD);
-    glUniform1f(glGetUniformLocation(shader->program, "material_ks"), UIConstants::Light::MATERIAL_KS);
-
-    // Bind model, view and projection matrices
-    glUniformMatrix4fv(shader->loc_model_matrix, 1, GL_FALSE, glm::value_ptr(modelMatrix));
-    glUniformMatrix4fv(shader->loc_view_matrix, 1, GL_FALSE, glm::value_ptr(camera->GetViewMatrix()));
-    glUniformMatrix4fv(shader->loc_projection_matrix, 1, GL_FALSE, glm::value_ptr(camera->GetProjectionMatrix()));
+    BindCameraMaterialMVP(shader, modelMatrix);
 }
 
 void NewVegas::SetShaderMVP(const Shader *shader, const glm::mat4 &modelMatrix) const
 {
-    // render an object using the specified shader and the specified position
     glUseProgram(shader->program);
 
-    // Set shader uniforms for light & material properties
-    // Bind light position
-    glUniform3fv(glGetUniformLocation(shader->program, "light_position"), 1, glm::value_ptr(lightPosition));
+    // set shader uniforms for light & material properties
+    // bind sun position
+    glUniform3fv(glGetUniformLocation(shader->program, "light_position"), 1, glm::value_ptr(sunPosition));
 
-    // Bind eye position (camera position)
+    // bind eye position (camera position)
     glm::vec3 eyePosition = modelMatrix * glm::vec4(camera->position, 1);
     glUniform3fv(glGetUniformLocation(shader->program, "eye_position"), 1, glm::value_ptr(eyePosition));
 
-    // Bind material property uniforms (shininess, kd, ks) 
-    glUniform1i(glGetUniformLocation(shader->program, "material_shininess"), UIConstants::Light::MATERIAL_SHININESS);
-    glUniform1f(glGetUniformLocation(shader->program, "material_kd"), UIConstants::Light::MATERIAL_KD);
-    glUniform1f(glGetUniformLocation(shader->program, "material_ks"), UIConstants::Light::MATERIAL_KS);
-
-    // Bind model, view and projection matrices
-    glUniformMatrix4fv(shader->loc_model_matrix, 1, GL_FALSE, glm::value_ptr(modelMatrix));
-    glUniformMatrix4fv(shader->loc_view_matrix, 1, GL_FALSE, glm::value_ptr(camera->GetViewMatrix()));
-    glUniformMatrix4fv(shader->loc_projection_matrix, 1, GL_FALSE, glm::value_ptr(camera->GetProjectionMatrix()));
+    BindCameraMaterialMVP(shader, modelMatrix);
 }
 
 void NewVegas::RenderTexturedMesh(const Mesh *mesh, const Shader *shader, const glm::mat4 &modelMatrix,
@@ -176,18 +168,18 @@ void NewVegas::RenderTexturedMesh(const Mesh *mesh, const Shader *shader, const 
     if (!mesh || !shader || !shader->GetProgramID())
         return;
 
-    if (spots.size())
-        SetShaderLightMVP(shader, modelMatrix, spots);
+    if (!spots.empty())
+        SetShaderSpotsMVP(shader, modelMatrix, spots);
     else
         SetShaderMVP(shader, modelMatrix);
 
-    // Bind textures
+    // bind textures
     for (unsigned i = 0; i < textures.size(); i++) {
         textures[i]->BindToTextureUnit(GL_TEXTURE0 + i);
         glUniform1i(glGetUniformLocation(shader->GetProgramID(), ("textureImg" + to_string(i)).c_str()), i);
     }
 
-    // Draw the object
+    // draw the object
     glBindVertexArray(mesh->GetBuffers()->VAO);
     glDrawElements(mesh->GetDrawMode(), static_cast<int>(mesh->indices.size()), GL_UNSIGNED_SHORT, 0);
 }
@@ -201,20 +193,14 @@ void NewVegas::OnInputUpdate(float deltaTime, int mods)
                        window->KeyHold(GLFW_KEY_D), window->KeyHold(GLFW_KEY_Q), window->KeyHold(GLFW_KEY_E));
     }
 
+    // move the sun
     float speed = 6;
-    // if (window->KeyHold(GLFW_KEY_UP)) lightPosition -= glm::vec3(0, 0, 1) * deltaTime * speed;
-    // if (window->KeyHold(GLFW_KEY_LEFT)) lightPosition -= glm::vec3(1, 0, 0) * deltaTime * speed;
-    // if (window->KeyHold(GLFW_KEY_DOWN)) lightPosition += glm::vec3(0, 0, 1) * deltaTime * speed;
-    // if (window->KeyHold(GLFW_KEY_RIGHT)) lightPosition += glm::vec3(1, 0, 0) * deltaTime * speed;
-    // if (window->KeyHold(GLFW_KEY_KP_ADD)) lightPosition += glm::vec3(0, 1, 0) * deltaTime * speed;
-    // if (window->KeyHold(GLFW_KEY_KP_SUBTRACT)) lightPosition -= glm::vec3(0, 1, 0) * deltaTime * speed;
-
-    if (window->KeyHold(GLFW_KEY_UP)) buildings->buildings[0]->spots[0].first -= glm::vec3(0, 0, 1) * deltaTime * speed;
-    if (window->KeyHold(GLFW_KEY_LEFT)) buildings->buildings[0]->spots[0].first -= glm::vec3(1, 0, 0) * deltaTime * speed;
-    if (window->KeyHold(GLFW_KEY_DOWN)) buildings->buildings[0]->spots[0].first += glm::vec3(0, 0, 1) * deltaTime * speed;
-    if (window->KeyHold(GLFW_KEY_RIGHT)) buildings->buildings[0]->spots[0].first += glm::vec3(1, 0, 0) * deltaTime * speed;
-    if (window->KeyHold(GLFW_KEY_KP_ADD)) buildings->buildings[0]->spots[0].first += glm::vec3(0, 1, 0) * deltaTime * speed;
-    if (window->KeyHold(GLFW_KEY_KP_SUBTRACT)) buildings->buildings[0]->spots[0].first -= glm::vec3(0, 1, 0) * deltaTime * speed;
+    if (window->KeyHold(GLFW_KEY_UP)) sunPosition -= glm::vec3(0, 0, 1) * deltaTime * speed;
+    if (window->KeyHold(GLFW_KEY_LEFT)) sunPosition -= glm::vec3(1, 0, 0) * deltaTime * speed;
+    if (window->KeyHold(GLFW_KEY_DOWN)) sunPosition += glm::vec3(0, 0, 1) * deltaTime * speed;
+    if (window->KeyHold(GLFW_KEY_RIGHT)) sunPosition += glm::vec3(1, 0, 0) * deltaTime * speed;
+    if (window->KeyHold(GLFW_KEY_KP_ADD)) sunPosition += glm::vec3(0, 1, 0) * deltaTime * speed;
+    if (window->KeyHold(GLFW_KEY_KP_SUBTRACT)) sunPosition -= glm::vec3(0, 1, 0) * deltaTime * speed;
 }
 
 void NewVegas::OnKeyPress(int key, int mods) {}

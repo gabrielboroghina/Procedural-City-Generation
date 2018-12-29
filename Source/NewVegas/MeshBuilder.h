@@ -17,7 +17,7 @@ public:
 
     static Mesh *CreateDisk(float radius, glm::vec3 centerPos);
 
-    static Mesh *CreateRect(glm::vec3 center, float height, float width, glm::vec3 color);
+    static Mesh *CreateRect(glm::vec3 center, float height, float width, glm::vec3 color = glm::vec3(0));
 
     static Mesh *CreateVertRect(glm::vec3 center, float height, float width);
 

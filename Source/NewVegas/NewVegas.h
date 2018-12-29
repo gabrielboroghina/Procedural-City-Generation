@@ -21,25 +21,27 @@ public:
 
 private:
     Camera *camera;
+    glm::vec3 sunPosition;
+    Mesh *sky, *floorMesh;
+    Texture2D *skyTexture, *floorTexture;
+
     StreetSign *streetSign;
     Streets *streets;
     Buildings *buildings;
-    Mesh *floorMesh;
-    Texture2D *floorTexture;
-    Mesh *crossroad;
     Trees *trees;
     TrafficLights *trafficLights;
     Cars *cars;
     Parks *parks;
-    glm::vec3 lightPosition;
-    Mesh *light;
 
     void FrameStart() override;
     void Update(float deltaTimeSeconds) override;
     void FrameEnd() override;
 
+    void BindCameraMaterialMVP(const Shader *shader, const glm::mat4 &modelMatrix) const;
+
     void SetShaderMVP(const Shader *shader, const glm::mat4 &modelMatrix) const;
-    void SetShaderLightMVP(const Shader *shader, const glm::mat4 &modelMatrix, std::vector<std::pair<glm::vec3, glm::vec3>> spots) const;
+
+    void SetShaderSpotsMVP(const Shader *shader, const glm::mat4 &modelMatrix, std::vector<std::pair<glm::vec3, glm::vec3>> spots) const;
 
     void RenderTexturedMesh(const Mesh *mesh, const Shader *shader, const glm::mat4 &modelMatrix,
                             const std::vector<Texture2D *> &textures, const std::vector<std::pair<glm::vec3, glm::vec3>> &spots = {}) const;

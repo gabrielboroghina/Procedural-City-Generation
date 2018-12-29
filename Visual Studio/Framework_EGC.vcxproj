@@ -83,6 +83,7 @@
     <None Include="..\Source\Shaders\Texture.VS.glsl" />
     <None Include="..\Source\Shaders\TextureByPos.FS.glsl" />
     <None Include="..\Source\Shaders\TextureByPos.VS.glsl" />
+    <None Include="..\Source\Shaders\TextureLight.FS.glsl" />
     <None Include="..\Source\Shaders\TextureSpotlight.FS.glsl" />
     <None Include="..\Source\Shaders\TextureSpotlight.VS.glsl" />
   </ItemGroup>
